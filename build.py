@@ -170,4 +170,8 @@ html = html.replace('/*__FOMED_SECTIONS__*/', '\n'.join(fomed_sections) + '\n' +
 
 with open('index.html', 'w', encoding='utf-8') as f:
     f.write(html)
+
+os.makedirs('public', exist_ok=True)
+with open('public/index.html', 'w', encoding='utf-8') as f:
+    f.write(html)
 print(f"Done: {len(html)} bytes")

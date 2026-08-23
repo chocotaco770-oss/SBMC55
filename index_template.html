@@ -298,13 +298,32 @@
     <script>
     (function() {
         const ADMIN = { username: 'MuntasirAlvee', password: 'Alvee@1971' };
-        let users = JSON.parse(localStorage.getItem('mbbs55_users') || '[]');
-        let customMenus = JSON.parse(localStorage.getItem('mbbs55_custom_menus') || '[]');
-        customMenus.forEach(m=>{if(!m.id)m.id='menu_legacy_'+Math.random().toString(36).substr(2,9);if(!m.files)m.files=[];if(!m.children)m.children=[];});
-        let uploadedFiles = JSON.parse(localStorage.getItem('mbbs55_uploaded_files') || '[]');
-        let loggedInUsers = JSON.parse(localStorage.getItem('mbbs55_logged_in') || '[]');
+        let authToken = null;
         let currentUser = null;
+        let users = [];
+        let customMenus = [];
+        let uploadedFiles = [];
+        let loggedInUsers = [];
         const $ = id => document.getElementById(id);
+
+        // API helper
+        async function api(path, opts) {
+            opts = opts || {};
+            const headers = Object.assign({'Content-Type':'application/json'}, opts.headers || {});
+            if (authToken) headers['Authorization'] = authToken;
+            opts.headers = headers;
+            const res = await fetch(path, opts);
+            return await res.json();
+        }
+        async function loadData() {
+            try {
+                const d = await api('/api/data');
+                if (d.users) users = d.users;
+                if (d.customMenus) customMenus = d.customMenus;
+                if (d.uploadedFiles) uploadedFiles = d.uploadedFiles;
+                if (d.loggedInUsers) loggedInUsers = d.loggedInUsers;
+            } catch(e) { console.error('loadData error:', e); }
+        }
 
         /*__JS_IMAGE_VARS__*/
         const imageMap = {
@@ -323,26 +342,43 @@
         function goSection(s){if(navHistory.length===0||navHistory[navHistory.length-1]!==s)navHistory.push(s);closeAll();hideAllSections();const sec=$(s);if(sec)sec.classList.add('active');document.querySelectorAll('.dropdown-trigger').forEach(t=>t.classList.remove('active'));document.querySelector('.dropdown-trigger[data-dropdown="pdfDropdown"]').classList.add('active');updateNavBack();}
         function goBack(){if(navHistory.length>1){navHistory.pop();const prev=navHistory[navHistory.length-1];navHistory.pop();goSection(prev);}else{navHistory=[];closeAll();hideAllSections();updateNavBack();}}
 
-        function trackLogin(username){loggedInUsers.push({username,time:new Date().toISOString()});localStorage.setItem('mbbs55_logged_in',JSON.stringify(loggedInUsers));}
-        function trackLogout(username){loggedInUsers=loggedInUsers.filter(u=>u.username!==username);localStorage.setItem('mbbs55_logged_in',JSON.stringify(loggedInUsers));}
-
         // Auth
-        $('loginForm').addEventListener('submit',function(e){e.preventDefault();const u=$('loginUsername').value.trim(),p=$('loginPassword').value;navHistory=[];if(u===ADMIN.username&&p===ADMIN.password){currentUser={name:'Admin',username:u};trackLogin(u);showPage('adminDashboard');renderAdminDashboard();$('welcomeUser').textContent='Welcome, Admin';return;}const f=users.find(x=>x.username===u&&x.password===p);if(f){currentUser={name:f.name,username:f.username};$('welcomeUser').textContent='Welcome, '+f.name;trackLogin(u);showPage('dashboard');renderStudentDashboard();}else{alert('Invalid username or password!');}});
-        $('signupForm').addEventListener('submit',function(e){e.preventDefault();const n=$('signupName').value.trim(),r=$('signupRoll').value.trim(),g=$('signupGroup').value,u=$('signupUsername').value.trim(),p=$('signupPassword').value;if(u===ADMIN.username){alert('This username is reserved.');return;}if(users.find(x=>x.username===u)){alert('Username already exists!');return;}users.push({name:n,roll:r,group:g,username:u,password:p});localStorage.setItem('mbbs55_users',JSON.stringify(users));alert('Registration successful! Please login.');showPage('login');$('signupForm').reset();});
+        $('loginForm').addEventListener('submit',async function(e){
+            e.preventDefault();
+            const u=$('loginUsername').value.trim(),p=$('loginPassword').value;
+            navHistory=[];
+            try{
+                const r=await api('/api/login',{method:'POST',body:JSON.stringify({username:u,password:p})});
+                if(r.success){
+                    authToken=r.token;
+                    currentUser=r.user;
+                    if(currentUser.isAdmin){showPage('adminDashboard');renderAdminDashboard();}
+                    else{$('welcomeUser').textContent='Welcome, '+currentUser.name;showPage('dashboard');await loadData();renderStudentDashboard();}
+                }else{alert(r.error||'Invalid username or password!');}
+            }catch(ex){alert('Login failed. Please try again.');}
+        });
+        $('signupForm').addEventListener('submit',async function(e){
+            e.preventDefault();
+            const n=$('signupName').value.trim(),r=$('signupRoll').value.trim(),g=$('signupGroup').value,u=$('signupUsername').value.trim(),p=$('signupPassword').value;
+            try{
+                const res=await api('/api/signup',{method:'POST',body:JSON.stringify({name:n,roll:r,group:g,username:u,password:p})});
+                if(res.success){alert('Registration successful! Please login.');showPage('login');$('signupForm').reset();}else{alert(res.error||'Signup failed.');}
+            }catch(ex){alert('Signup failed. Please try again.');}
+        });
         $('showSignup').addEventListener('click',e=>{e.preventDefault();showPage('signup');});
         $('showLogin').addEventListener('click',e=>{e.preventDefault();showPage('login');});
-        $('logoutBtn').addEventListener('click',()=>{if(currentUser)trackLogout(currentUser.username);currentUser=null;navHistory=[];showPage('login');$('loginForm').reset();});
+        $('logoutBtn').addEventListener('click',async()=>{try{await api('/api/logout',{method:'POST'});}catch(e){}authToken=null;currentUser=null;navHistory=[];showPage('login');$('loginForm').reset();});
 
         // Admin dashboard
-        function renderAdminDashboard(){renderAccountsList();renderLoggedInList();renderMenuBuilder();renderMenuParentOptions();}
+        async function renderAdminDashboard(){await loadData();renderAccountsList();renderLoggedInList();renderMenuBuilder();renderMenuParentOptions();}
         function renderAccountsList(){const el=$('accountsList');if(!users.length){el.innerHTML='<div class="empty-state"><div class="icon">👤</div><p>No registered accounts yet</p></div>';return;}el.innerHTML=users.map(u=>'<div class="account-item"><div><div class="account-name">'+u.name+'</div><div class="account-user">@'+u.username+' | Roll: '+u.roll+' | Group: '+u.group+'</div><div class="account-pass">Password: '+u.password+'</div></div></div>').join('');}
         function renderLoggedInList(){const el=$('loggedInList');if(!loggedInUsers.length){el.innerHTML='<div class="empty-state"><div class="icon">🔴</div><p>No users currently logged in</p></div>';return;}el.innerHTML=loggedInUsers.map(u=>'<div class="account-item"><div><span class="status-dot status-online"></span><span class="account-name">'+u.username+'</span><div style="color:#888;font-size:12px;margin-top:4px;">Since: '+new Date(u.time).toLocaleString()+'</div></div></div>').join('');}
         function renderMenuBuilder(){const el=$('menuList');if(!customMenus.length){el.innerHTML='<div class="empty-state" style="padding:15px;"><p>No custom menus yet</p></div>';return;}function renderMenuItem(m,depth){const indent=depth*20;const hasChildren=m.children&&m.children.length>0;let html='<div class="account-item" style="padding-left:'+(15+indent)+'px;"><div style="flex:1;"><span class="account-name">'+(hasChildren?'📁':'📄')+' '+m.name+'</span><div class="account-user">Files: '+(m.files?m.files.length:0)+(hasChildren?' | Sub-menus: '+m.children.length:'')+'</div></div><button class="btn-danger menu-delete-btn" data-id="'+m.id+'" style="padding:5px 10px;font-size:12px;">Delete</button></div>';if(hasChildren)m.children.forEach(c=>{html+=renderMenuItem(c,depth+1);});return html;}el.innerHTML=customMenus.map(m=>renderMenuItem(m,0)).join('');}
         function renderMenuParentOptions(){const el=$('menuParent');if(!el)return;let opts='';['pharma','fomed'].forEach(s=>{const label=s==='pharma'?'Pharmacology':'Forensic Medicine';opts+='<optgroup label="'+label+'">';opts+='<option value="'+s+'">Top Level - '+label+'</option>';function addOpts(menus,prefix){menus.forEach(m=>{if(m.parent===s){const full=prefix?prefix+' > '+m.name:m.name;opts+='<option value="custom:'+m.id+'">'+full+'</option>';if(m.children)addOpts(m.children,full);}});}addOpts(customMenus.filter(m=>m.parent===s),'');opts+='</optgroup>';});el.innerHTML=opts;renderUploadParentOptions();}
         function findMenuById(id,menus){for(let m of menus){if(m.id===id)return m;if(m.children){const found=findMenuById(id,m.children);if(found)return found;}}return null;}
         function deleteMenuById(id,menus){for(let i=0;i<menus.length;i++){if(menus[i].id===id){menus.splice(i,1);return true;}if(menus[i].children&&deleteMenuById(id,menus[i].children))return true;}return false;}
-        $('menuList').addEventListener('click',function(e){const btn=e.target.closest('.menu-delete-btn');if(btn){const id=btn.dataset.id;if(!confirm('Delete this menu and all its files?'))return;deleteMenuById(id,customMenus);localStorage.setItem('mbbs55_custom_menus',JSON.stringify(customMenus));renderMenuBuilder();renderMenuParentOptions();}});
-        $('createMenuBtn').addEventListener('click',function(){const name=$('menuName').value.trim();const parentVal=$('menuParent').value;if(!name){return;}const newId='menu_'+Date.now();const isNested=parentVal.startsWith('custom:');const newMenu={id:newId,name:name,parent:isNested?(findMenuById(parentVal.substring(7),customMenus)||{}).parent||'pharma':parentVal,files:[],children:[]};if(isNested){const parentId=parentVal.substring(7);const parentMenu=findMenuById(parentId,customMenus);if(parentMenu){if(!parentMenu.children)parentMenu.children=[];parentMenu.children.push(newMenu);}}else{customMenus.push(newMenu);}localStorage.setItem('mbbs55_custom_menus',JSON.stringify(customMenus));$('menuName').value='';renderMenuBuilder();renderMenuParentOptions();});
+        $('menuList').addEventListener('click',async function(e){const btn=e.target.closest('.menu-delete-btn');if(btn){const id=btn.dataset.id;if(!confirm('Delete this menu and all its files?'))return;await api('/api/admin/menus/'+id,{method:'DELETE'});deleteMenuById(id,customMenus);renderMenuBuilder();renderMenuParentOptions();}});
+        $('createMenuBtn').addEventListener('click',async function(){const name=$('menuName').value.trim();const parentVal=$('menuParent').value;if(!name){return;}const isNested=parentVal.startsWith('custom:');const parentId=isNested?parentVal.substring(7):null;const baseParent=isNested?(parentVal.substring(7)):(parentVal==='pharma'||parentVal==='fomed'?parentVal:'pharma');try{await api('/api/admin/menus',{method:'POST',body:JSON.stringify({name,parentId,parentVal:baseParent})});}catch(e){}if(isNested){const pid=parentVal.substring(7);const parentMenu=findMenuById(pid,customMenus);if(parentMenu){const newId='menu_'+Date.now();const newMenu={id:newId,name:name,parent:parentMenu.parent||'pharma',files:[],children:[]};if(!parentMenu.children)parentMenu.children=[];parentMenu.children.push(newMenu);}}else{const newId='menu_'+Date.now();const resolvedParent=(parentVal==='pharma'||parentVal==='fomed')?parentVal:'pharma';customMenus.push({id:newId,name:name,parent:resolvedParent,files:[],children:[]});}$('menuName').value='';renderMenuBuilder();renderMenuParentOptions();});
 
         // Upload
         function renderUploadParentOptions(){const el=$('uploadParent');let opts='<option value="">Select menu to upload to</option>';['pharma','fomed'].forEach(s=>{const label=s==='pharma'?'Pharmacology':'Forensic Medicine';opts+='<optgroup label="'+label+'">';opts+='<option value="'+s+'-tana">'+label+' - Tana Question</option>';opts+='<option value="'+s+'-arranged">'+label+' - Arranged</option>';function addMenuOpts(menus,prefix){menus.forEach(m=>{if(m.parent===s||!m.parent){const fullPath=prefix?prefix+' > '+m.name:m.name;opts+='<option value="custom:'+m.id+'">'+label+' - '+fullPath+'</option>';if(m.children)addMenuOpts(m.children,fullPath);}});}addMenuOpts(customMenus.filter(m=>m.parent===s),'');opts+='</optgroup>';});el.innerHTML=opts;}
@@ -355,7 +391,8 @@
         function handleFiles(fileList){const target=$('uploadParent').value;if(!target){alert('Please select a menu to upload to.');return;}pendingFiles=Array.from(fileList);renderPreview();}
         function renderPreview(){const area=$('previewArea');if(!pendingFiles.length){area.innerHTML='<p style="color:#999;font-size:13px;">No files selected</p>';return;}area.innerHTML='';pendingFiles.forEach((file,fi)=>{const reader=new FileReader();reader.onload=function(e){const dataUrl=e.target.result;const isImage=file.type.startsWith('image/');const card=document.createElement('div');card.style.cssText='border:1px solid #e0e0e0;border-radius:8px;padding:10px;width:150px;text-align:center;position:relative;';card.innerHTML=(isImage?'<img src="'+dataUrl+'" style="width:100%;height:100px;object-fit:cover;border-radius:6px;">':'<div style="height:100px;display:flex;align-items:center;justify-content:center;font-size:40px;">📄</div>')+'<p style="font-size:11px;margin-top:6px;color:#333;word-break:break-all;">'+file.name+'</p><button class="btn-danger" onclick="removePendingFile('+fi+')" style="position:absolute;top:5px;right:5px;padding:2px 6px;font-size:10px;">✕</button>';area.appendChild(card);};reader.readAsDataURL(file);});const uploadBtn=document.createElement('button');uploadBtn.className='btn-success';uploadBtn.style.cssText='margin-top:10px;width:100%;';uploadBtn.textContent='⬆️ Upload All ('+pendingFiles.length+' files)';uploadBtn.onclick=uploadAllFiles;area.appendChild(uploadBtn);}
         window.removePendingFile=function(idx){pendingFiles.splice(idx,1);renderPreview();};
-        function uploadAllFiles(){const target=$('uploadParent').value;if(!target||!pendingFiles.length){return;}$('uploadStatus').innerHTML='<p style="color:#2980b9;">⏳ Uploading '+pendingFiles.length+' files...</p>';let uploaded=0;const total=pendingFiles.length;pendingFiles.forEach(file=>{const reader=new FileReader();reader.onload=function(e){const dataUrl=e.target.result;const fileObj={name:file.name,data:dataUrl,time:new Date().toISOString()};if(target.startsWith('custom:')){const menuId=target.substring(7);const menu=findMenuById(menuId,customMenus);if(menu){menu.files.push(fileObj);}}else{uploadedFiles.push({target,file:fileObj});}uploaded++;if(uploaded===total){localStorage.setItem('mbbs55_custom_menus',JSON.stringify(customMenus));localStorage.setItem('mbbs55_uploaded_files',JSON.stringify(uploadedFiles));$('uploadStatus').innerHTML='<p style="color:#27ae60;">✅ All '+total+' files uploaded successfully!</p>';pendingFiles=[];renderPreview();renderMenuBuilder();setTimeout(()=>$('uploadStatus').innerHTML='',3000);}};reader.readAsDataURL(file);});}
+        async function uploadAllFiles(){const target=$('uploadParent').value;if(!target||!pendingFiles.length){return;}$('uploadStatus').innerHTML='<p style="color:#2980b9;">⏳ Uploading '+pendingFiles.length+' files...</p>';const filesToSend=[];let readCount=0;const total=pendingFiles.length;pendingFiles.forEach(file=>{const reader=new FileReader();reader.onload=function(e){filesToSend.push({name:file.name,data:e.target.result});readCount++;if(readCount===total){sendFilesToServer(target,filesToSend);}};reader.readAsDataURL(file);});}
+        async function sendFilesToServer(target,files){try{await api('/api/admin/upload',{method:'POST',body:JSON.stringify({target,files})});$('uploadStatus').innerHTML='<p style="color:#27ae60;">✅ All '+files.length+' files uploaded successfully!</p>';pendingFiles=[];renderPreview();await loadData();renderMenuBuilder();setTimeout(()=>$('uploadStatus').innerHTML='',3000);}catch(e){$('uploadStatus').innerHTML='<p style="color:#e74c3c;">❌ Upload failed</p>';}}
 
         // Student dashboard - custom menus show as list view pages
         function renderStudentDashboard(){
@@ -432,7 +469,7 @@
             });
         }
         Object.keys(imageMap).forEach(k=>{const img=$(k+'_img');if(img)img.src=imageMap[k];});
-        renderStudentDashboard();
+        renderStudentDashboard(); // renders with whatever is in memory; fresh data loaded on login
         function downloadURL(d,n){const p=d.split(','),m=p[0].match(/:(.*?);/)[1],b=atob(p[1]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);const bl=new Blob([u],{type:m});const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=n;document.body.appendChild(a);a.click();document.body.removeChild(a);}
 
         // Event bindings
@@ -460,8 +497,7 @@
             if(cr){const sid=cr.dataset.section;closeAll();hideAllSections();if(sid&&sid!=='none')$(sid).classList.add('active');}
         });
         document.addEventListener('click',()=>{closeAll();});
-        window.addEventListener('storage',function(e){if(e.key==='mbbs55_custom_menus'||e.key==='mbbs55_uploaded_files'){customMenus=JSON.parse(localStorage.getItem('mbbs55_custom_menus')||'[]');uploadedFiles=JSON.parse(localStorage.getItem('mbbs55_uploaded_files')||'[]');renderStudentDashboard();}});
-        $('adminLogoutBtn').addEventListener('click',()=>{if(currentUser)trackLogout(currentUser.username);currentUser=null;showPage('login');$('loginForm').reset();});
+        $('adminLogoutBtn').addEventListener('click',async()=>{try{await api('/api/logout',{method:'POST'});}catch(e){}authToken=null;currentUser=null;showPage('login');$('loginForm').reset();});
     })();
     </script>
 </body>

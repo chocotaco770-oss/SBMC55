@@ -1,0 +1,48 @@
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 61002)
+Traceback (most recent call last):
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Muntasir\Downloads\New folder\.freebuff\.freebuff\.freebuff\.freebuff\server.py", line 64, in __init__
+    super().__init__(*args, directory=PUBLIC_DIR, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\http\server.py", line 736, in __init__
+    super().__init__(*args, **kwargs)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\http\server.py", line 500, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\http\server.py", line 488, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "C:\Users\Muntasir\Downloads\New folder\.freebuff\.freebuff\.freebuff\.freebuff\server.py", line 80, in do_GET
+    super().do_GET()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\http\server.py", line 743, in do_GET
+    self.copyfile(f, self.wfile)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\http\server.py", line 946, in copyfile
+    shutil.copyfileobj(source, outputfile)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\shutil.py", line 257, in copyfileobj
+    fdst_write(buf)
+    ~~~~~~~~~~^^^^^
+  File "C:\Users\Muntasir\AppData\Local\Python\pythoncore-3.14-64\Lib\socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+----------------------------------------
+C:\Users\Muntasir\Downloads\New folder\.freebuff\.freebuff\.freebuff\.freebuff\server.py:142: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  db['loggedInUsers'].append({'username': username, 'time': __import__('datetime').datetime.utcnow().isoformat() + 'Z'})
+C:\Users\Muntasir\Downloads\New folder\.freebuff\.freebuff\.freebuff\.freebuff\server.py:152: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  db['loggedInUsers'].append({'username': username, 'time': __import__('datetime').datetime.utcnow().isoformat() + 'Z'})

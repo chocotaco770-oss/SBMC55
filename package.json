@@ -1,0 +1,16 @@
+{
+  "name": "mbbs55-portal",
+  "version": "1.0.0",
+  "description": "Sher-E-Bangla Medical College MBBS 55 Student Portal",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "multer": "^1.4.5-lts.1",
+    "body-parser": "^1.20.2"
+  }
+}
