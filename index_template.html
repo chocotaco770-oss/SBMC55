@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sher-E-Bangla Medical College - MBBS 55</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%); min-height: 100vh; }
+        .page { display: none; min-height: 100vh; }
+        .page.active { display: block; }
+        .container { max-width: 480px; margin: 50px auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; color: white; }
+        .logo { font-size: 64px; margin-bottom: 10px; }
+        .header h1 { font-size: 26px; margin-bottom: 8px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header h2 { font-size: 16px; font-weight: 400; opacity: 0.9; }
+        .form-container { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .form-container h3 { text-align: center; color: #1a5276; margin-bottom: 25px; font-size: 22px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; color: #333; font-weight: 500; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 15px; transition: border-color 0.3s; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #2980b9; }
+        .btn { padding: 12px 25px; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; transition: all 0.3s; font-weight: 600; }
+        .btn-primary { background: linear-gradient(135deg, #1a5276, #2980b9); color: white; width: 100%; }
+        .btn-primary:hover { background: linear-gradient(135deg, #154360, #2471a3); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-download { padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-download:hover { background: #219a52; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .btn-back { padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-back:hover { background: #5a6268; }
+        .btn-drive { padding: 14px 28px; background: #4285f4; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; font-weight: 600; transition: all 0.3s; display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
+        .btn-drive:hover { background: #3367d6; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(66,133,244,0.4); }
+        .btn-admin { padding: 12px 25px; background: linear-gradient(135deg, #8e44ad, #9b59b6); color: white; border: none; border-radius: 8px; font-size: 15px; cursor: pointer; font-weight: 600; transition: all 0.3s; width: 100%; margin-top: 10px; }
+        .btn-admin:hover { background: linear-gradient(135deg, #7d3c98, #8e44ad); transform: translateY(-2px); }
+        .btn-success { padding: 10px 20px; background: #27ae60; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-success:hover { background: #219a52; }
+        .btn-danger { padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .btn-danger:hover { background: #c0392b; }
+        .switch-text { text-align: center; margin-top: 20px; color: #666; font-size: 14px; }
+        .switch-text a { color: #2980b9; text-decoration: none; font-weight: 600; }
+        .switch-text a:hover { text-decoration: underline; }
+        .navbar { background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative; z-index: 100; }
+        .nav-brand { display: flex; align-items: center; font-size: 16px; font-weight: 600; color: #1a5276; }
+        .nav-brand span { margin-right: 8px; }
+        #navBackBtn { transition: all 0.2s; }
+        #navBackBtn:hover { background: #e8f4f8; border-radius: 6px; }
+        .nav-user { display: flex; align-items: center; gap: 15px; }
+        #welcomeUser { color: #333; font-weight: 500; font-size: 14px; }
+        .dropdown-bar { background: white; padding: 0 30px; display: flex; box-shadow: 0 2px 6px rgba(0,0,0,0.08); position: relative; z-index: 90; border-bottom: 1px solid #e0e0e0; }
+        .dropdown { position: relative; }
+        .dropdown-trigger { padding: 14px 22px; cursor: pointer; font-size: 15px; font-weight: 600; color: #1a5276; display: flex; align-items: center; gap: 8px; transition: background 0.2s; border-bottom: 3px solid transparent; }
+        .dropdown-trigger:hover { background: #f0f8ff; }
+        .dropdown-trigger.active { border-bottom-color: #2980b9; background: #e8f4f8; }
+        .dropdown-trigger .arrow { font-size: 10px; transition: transform 0.3s; }
+        .dropdown-trigger.open .arrow { transform: rotate(180deg); }
+        .dd-panel { display: none; position: absolute; top: 100%; left: 0; background: white; min-width: 300px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); border-radius: 0 0 8px 8px; z-index: 200; }
+        .dd-panel.open { display: block; }
+        .dd-item { padding: 12px 20px; cursor: pointer; font-size: 14px; color: #333; display: flex; align-items: center; gap: 10px; transition: background 0.2s; border-bottom: 1px solid #f0f0f0; }
+        .dd-item:last-child { border-bottom: none; }
+        .dd-item:hover { background: #e8f4f8; color: #1a5276; }
+        .dd-item .arr { margin-left: auto; font-size: 10px; transition: transform 0.3s; }
+        .dd-item.open .arr { transform: rotate(90deg); }
+        .dd-sub { display: none; background: #f8f9fa; }
+        .dd-sub.open { display: block; }
+        .dd-sub-item { padding: 11px 20px 11px 48px; cursor: pointer; font-size: 13px; color: #555; display: flex; align-items: center; gap: 8px; transition: background 0.2s; border-bottom: 1px solid #eee; }
+        .dd-sub-item:last-child { border-bottom: none; }
+        .dd-sub-item:hover { background: #eef2f7; color: #1a5276; }
+        .dd-sub-item .arr { margin-left: auto; font-size: 10px; transition: transform 0.3s; }
+        .dd-sub-item.open .arr { transform: rotate(90deg); }
+        .dd-leaf { display: none; background: #eef2f7; }
+        .dd-leaf.open { display: block; }
+        .dd-leaf-item { padding: 10px 20px 10px 72px; cursor: pointer; font-size: 13px; color: #1a5276; font-weight: 500; display: flex; align-items: center; gap: 8px; transition: background 0.2s; border-bottom: 1px solid #e0e8f0; }
+        .dd-leaf-item:last-child { border-bottom: none; }
+        .dd-leaf-item:hover { background: #d4eaf5; }
+        .main-content { padding: 30px; background: #f5f5f5; min-height: calc(100vh - 110px); }
+        .section { display: none; }
+        .section.active { display: block; max-width: 900px; margin: 0 auto; }
+        .section h2 { color: #1a5276; margin-bottom: 8px; font-size: 24px; }
+        .section .breadcrumb { color: #888; font-size: 13px; margin-bottom: 20px; }
+        .section .breadcrumb span { color: #2980b9; }
+        .crumb-link { cursor: pointer; }
+        .crumb-link:hover { text-decoration: underline; }
+        .batch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 10px; }
+        .batch-card { background: white; border-radius: 10px; padding: 20px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s; border: 2px solid transparent; }
+        .batch-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); border-color: #2980b9; }
+        .batch-card-inner { display: flex; align-items: center; gap: 12px; }
+        .batch-icon { font-size: 28px; }
+        .batch-name { font-size: 15px; font-weight: 600; color: #1a5276; }
+        .file-card { background: white; border-radius: 10px; padding: 15px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.3s; border: 2px solid transparent; display: flex; align-items: center; gap: 12px; }
+        .file-card:hover { transform: translateY(-3px); box-shadow: 0 6px 18px rgba(0,0,0,0.12); border-color: #2980b9; }
+        .file-card-thumb { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .file-card-info { flex: 1; min-width: 0; }
+        .file-card-name { font-size: 14px; font-weight: 600; color: #1a5276; word-break: break-word; }
+        .file-card-meta { font-size: 12px; color: #888; margin-top: 3px; }
+        .image-viewer { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); text-align: center; }
+        .image-viewer img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); border: 1px solid #e0e0e0; }
+        .image-viewer p { color: #666; margin-top: 12px; font-size: 13px; }
+        .download-row { margin-top: 18px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+        .drive-section { background: white; border-radius: 12px; padding: 40px 25px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); text-align: center; }
+        .drive-section p { color: #555; font-size: 15px; margin-bottom: 25px; }
+
+        /* ADMIN DASHBOARD */
+        .admin-nav { background: linear-gradient(135deg, #8e44ad, #9b59b6); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-nav .nav-brand { color: white; font-size: 18px; }
+        .admin-content { padding: 30px; background: #f5f5f5; min-height: calc(100vh - 60px); }
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .admin-card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+        .admin-card h3 { color: #1a5276; margin-bottom: 15px; font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        .admin-card h3 .icon { font-size: 24px; }
+        .account-list { max-height: 400px; overflow-y: auto; }
+        .account-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #f0f0f0; }
+        .account-item:last-child { border-bottom: none; }
+        .account-item:hover { background: #f8f9fa; }
+        .account-name { font-weight: 600; color: #333; }
+        .account-user { color: #888; font-size: 13px; }
+        .account-pass { color: #e74c3c; font-size: 12px; font-family: monospace; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .status-online { background: #27ae60; }
+        .status-offline { background: #bdc3c7; }
+        .upload-zone { border: 2px dashed #e0e0e0; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .upload-zone:hover { border-color: #2980b9; background: #f0f8ff; }
+        .upload-zone p { color: #666; margin-top: 10px; }
+        .new-menu-form { background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 15px; }
+        .new-menu-form h4 { margin-bottom: 10px; color: #333; }
+        .menu-builder-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .menu-builder-item input { flex: 1; }
+        .empty-state { text-align: center; padding: 30px; color: #999; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 10px; }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            .container { margin: 15px; padding: 15px; }
+            .header h1 { font-size: 20px; }
+            .header h2 { font-size: 14px; }
+            .form-container { padding: 20px; }
+            .form-group input, .form-group select { padding: 14px; font-size: 16px; }
+            .btn { padding: 14px 20px; font-size: 16px; }
+            .navbar, .admin-nav { flex-direction: column; gap: 10px; padding: 12px; }
+            .nav-brand { font-size: 14px; }
+            .dropdown-bar { padding: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .dropdown-trigger { padding: 12px 14px; font-size: 13px; white-space: nowrap; min-height: 44px; }
+            .dd-panel { position: fixed; top: auto; left: 0; right: 0; bottom: 0; max-height: 70vh; overflow-y: auto; border-radius: 15px 15px 0 0; z-index: 1000; }
+            .dd-item { padding: 14px 20px; font-size: 15px; min-height: 48px; }
+            .dd-sub-item { padding: 14px 20px 14px 44px; font-size: 14px; min-height: 44px; }
+            .dd-leaf-item { padding: 12px 20px 12px 68px; font-size: 14px; min-height: 44px; }
+            .main-content { padding: 15px; }
+            .section h2 { font-size: 20px; }
+            .batch-grid, .file-grid { grid-template-columns: 1fr; gap: 10px; }
+            .file-card { padding: 12px; }
+            .image-viewer { padding: 15px; }
+            .image-viewer img { max-height: 60vh; }
+            .download-row { gap: 8px; }
+            .btn-download, .btn-back { padding: 12px 16px; font-size: 13px; }
+            .admin-grid { grid-template-columns: 1fr; gap: 15px; }
+            .admin-card { padding: 18px; }
+            .admin-content { padding: 15px; }
+            .menu-builder-item { flex-direction: column; }
+            .menu-builder-item select, .menu-builder-item input { width: 100%; }
+            .drive-section { padding: 25px 15px; }
+            .btn-drive { padding: 12px 20px; font-size: 14px; }
+            .upload-zone { padding: 20px; }
+            .account-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .breadcrumb { font-size: 11px; word-break: break-word; }
+        }
+        @media (max-width: 360px) {
+            .container { margin: 10px; padding: 10px; }
+            .header h1 { font-size: 18px; }
+            .batch-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- STUDENT LOGIN -->
+    <div id="loginPage" class="page active">
+        <div class="container">
+            <div class="header"><div class="logo">🏥</div><h1>Sher-E-Bangla Medical College</h1><h2>MBBS 55 - Student Portal</h2></div>
+            <div class="form-container">
+                <h3>Login</h3>
+                <form id="loginForm">
+                    <div class="form-group"><label>Username</label><input type="text" id="loginUsername" placeholder="Enter your username" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Enter your password" required></div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                <p class="switch-text">Don't have an account? <a href="#" id="showSignup">Sign up here</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- SIGNUP -->
+    <div id="signupPage" class="page">
+        <div class="container">
+            <div class="header"><div class="logo">🏥</div><h1>Sher-E-Bangla Medical College</h1><h2>MBBS 55 - New Registration</h2></div>
+            <div class="form-container">
+                <h3>Sign Up</h3>
+                <form id="signupForm">
+                    <div class="form-group"><label>Full Name</label><input type="text" id="signupName" placeholder="Enter your full name" required></div>
+                    <div class="form-group"><label>Roll Number</label><input type="text" id="signupRoll" placeholder="e.g. 55-001" required></div>
+                    <div class="form-group"><label>Group</label><select id="signupGroup" required><option value="">Select Group</option><option value="A">Group A</option><option value="B">Group B</option><option value="C">Group C</option><option value="D">Group D</option></select></div>
+                    <div class="form-group"><label>Username</label><input type="text" id="signupUsername" placeholder="Choose a username" required></div>
+                    <div class="form-group"><label>Password</label><input type="password" id="signupPassword" placeholder="Choose a password" required></div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </form>
+                <p class="switch-text">Already have an account? <a href="#" id="showLogin">Login here</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- STUDENT DASHBOARD -->
+    <div id="dashboardPage" class="page">
+        <nav class="navbar">
+            <div class="nav-brand"><button id="navBackBtn" class="go-back-btn" style="display:none;background:none;border:none;font-size:20px;cursor:pointer;padding:5px 8px;color:#1a5276;">←</button><span>🏥</span><span>Sher-E-Bangla Medical College</span></div>
+            <div class="nav-user"><span id="welcomeUser">Welcome, Student</span><button id="logoutBtn" class="btn btn-secondary">Logout</button></div>
+        </nav>
+        <div class="dropdown-bar">
+            <div class="dropdown" id="pdfDropdown">
+                <div class="dropdown-trigger" data-dropdown="pdfDropdown">📄 pdf <span class="arrow">▼</span></div>
+                <div class="dd-panel">
+                    <div class="dd-item" data-toggle="pharma-l2">🔬 Pharmacology <span class="arr">▶</span></div>
+                    <div class="dd-sub" id="pharma-l2">
+                        <div class="dd-sub-item" data-toggle="pharma-assess-l3">📋 Previous 2nd Assessment Questions <span class="arr">▶</span></div>
+                        <div class="dd-leaf" id="pharma-assess-l3">
+                            <div class="dd-leaf-item" data-section="pharma-batchwise">📄 Batchwise</div>
+                            <div class="dd-leaf-item" data-section="pharma-arranged">📄 Arranged</div>
+                        </div>
+                        <div class="dd-sub-item" data-section="pharma-tana">📋 Tana Question</div>
+                        <div class="dd-sub-item" data-section="pharma-slides">📚 Class slides, curriculum and others</div>
+                    </div>
+                    <div class="dd-item" data-toggle="fomed-l2">⚖️ Forensic Medicine <span class="arr">▶</span></div>
+                    <div class="dd-sub" id="fomed-l2">
+                        <div class="dd-sub-item" data-toggle="fomed-assess-l3">📋 Previous 2nd Assessment Questions <span class="arr">▶</span></div>
+                        <div class="dd-leaf" id="fomed-assess-l3">
+                            <div class="dd-leaf-item" data-section="fomed-batchwise">📄 Batchwise</div>
+                            <div class="dd-leaf-item" data-section="fomed-arranged">📄 Arranged</div>
+                        </div>
+                        <div class="dd-sub-item" data-section="fomed-tana">📋 Tana Question</div>
+                        <div class="dd-sub-item" data-section="fomed-slides">📚 Class slides, curriculum and others</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-content">
+            /*__PHARMA_LIST__*/
+            /*__PHARMA_SECTIONS__*/
+            /*__FOMED_LIST__*/
+            /*__FOMED_SECTIONS__*/
+        </div>
+    </div>
+    <!-- ADMIN DASHBOARD -->
+    <div id="adminDashboardPage" class="page">
+        <nav class="admin-nav">
+            <div class="nav-brand">🛡️ Admin Dashboard</div>
+            <div class="nav-user"><span id="adminWelcome">Welcome, Admin</span><button id="adminLogoutBtn" class="btn" style="background:white;color:#8e44ad;">Logout</button></div>
+        </nav>
+        <div class="admin-content">
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <h3><span class="icon">👥</span> Registered Accounts</h3>
+                    <div id="accountsList" class="account-list"></div>
+                </div>
+                <div class="admin-card">
+                    <h3><span class="icon">🟢</span> Real-Time Logged In Users</h3>
+                    <div id="loggedInList" class="account-list"></div>
+                </div>
+                <div class="admin-card" style="grid-column: 1 / -1;">
+                    <h3><span class="icon">📁</span> Upload Files & Manage Menus</h3>
+                    <div class="new-menu-form">
+                        <h4>Create New Menu</h4>
+                        <div class="menu-builder-item">
+                            <select id="menuParent" style="padding:10px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;">
+                                <option value="pharma">Under Pharmacology</option>
+                                <option value="fomed">Under Forensic Medicine</option>
+                            </select>
+                            <input type="text" id="menuName" placeholder="Menu name (e.g. Chapter 1)" style="flex:1;padding:10px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;">
+                            <button class="btn-success" id="createMenuBtn">+ Create</button>
+                        </div>
+                        <div id="menuList" style="margin-top:15px;"></div>
+                    </div>
+                    <div class="new-menu-form" style="margin-top:15px;">
+                        <h4>Upload Files (Multiple)</h4>
+                        <div class="menu-builder-item">
+                            <select id="uploadParent" style="padding:10px;border:2px solid #e0e0e0;border-radius:8px;font-size:14px;width:100%;"></select>
+                        </div>
+                        <div class="upload-zone" id="uploadZone">
+                            <p style="font-size:36px;">📤</p>
+                            <p>Click or drag files here to upload</p>
+                            <p style="font-size:12px;color:#999;margin-top:5px;">Supports: JPG, PNG, PDF (multiple files allowed)</p>
+                            <input type="file" id="fileInput" style="display:none;" accept=".jpg,.jpeg,.png,.pdf" multiple>
+                        </div>
+                        <div id="uploadStatus" style="margin-top:10px;text-align:center;"></div>
+                    </div>
+                    <div class="new-menu-form" style="margin-top:15px;">
+                        <h4>Upload Preview</h4>
+                        <div id="previewArea" style="display:flex;flex-wrap:wrap;gap:10px;min-height:60px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function() {
+        const ADMIN = { username: 'MuntasirAlvee', password: 'Alvee@1971' };
+        let users = JSON.parse(localStorage.getItem('mbbs55_users') || '[]');
+        let customMenus = JSON.parse(localStorage.getItem('mbbs55_custom_menus') || '[]');
+        customMenus.forEach(m=>{if(!m.id)m.id='menu_legacy_'+Math.random().toString(36).substr(2,9);if(!m.files)m.files=[];if(!m.children)m.children=[];});
+        let uploadedFiles = JSON.parse(localStorage.getItem('mbbs55_uploaded_files') || '[]');
+        let loggedInUsers = JSON.parse(localStorage.getItem('mbbs55_logged_in') || '[]');
+        let currentUser = null;
+        const $ = id => document.getElementById(id);
+
+        /*__JS_IMAGE_VARS__*/
+        const imageMap = {
+/*__IMAGE_MAP__*/
+        };
+        window._pharma_tana_pdf = pharma_tana_pdf;
+        window._fomed_tana_pdf = fomed_tana_pdf;
+        window._pharma_arranged_pdf = pharma_arranged_pdf;
+        window._fomed_arranged_pdf = fomed_arranged_pdf;
+
+        let navHistory=[];
+        function updateNavBack(){const btn=$('navBackBtn');if(btn)btn.style.display=navHistory.length>1?'inline-block':'none';}
+        function showPage(n){['loginPage','signupPage','dashboardPage','adminDashboardPage'].forEach(i=>$(i).classList.remove('active'));$(n+'Page').classList.add('active');}
+        function hideAllSections(){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));}
+        function closeAll(){document.querySelectorAll('.dd-panel,.dd-sub,.dd-leaf').forEach(e=>e.classList.remove('open'));document.querySelectorAll('.dd-item,.dd-sub-item,.dd-leaf-item,.dropdown-trigger').forEach(e=>e.classList.remove('open'));}
+        function goSection(s){if(navHistory.length===0||navHistory[navHistory.length-1]!==s)navHistory.push(s);closeAll();hideAllSections();const sec=$(s);if(sec)sec.classList.add('active');document.querySelectorAll('.dropdown-trigger').forEach(t=>t.classList.remove('active'));document.querySelector('.dropdown-trigger[data-dropdown="pdfDropdown"]').classList.add('active');updateNavBack();}
+        function goBack(){if(navHistory.length>1){navHistory.pop();const prev=navHistory[navHistory.length-1];navHistory.pop();goSection(prev);}else{navHistory=[];closeAll();hideAllSections();updateNavBack();}}
+
+        function trackLogin(username){loggedInUsers.push({username,time:new Date().toISOString()});localStorage.setItem('mbbs55_logged_in',JSON.stringify(loggedInUsers));}
+        function trackLogout(username){loggedInUsers=loggedInUsers.filter(u=>u.username!==username);localStorage.setItem('mbbs55_logged_in',JSON.stringify(loggedInUsers));}
+
+        // Auth
+        $('loginForm').addEventListener('submit',function(e){e.preventDefault();const u=$('loginUsername').value.trim(),p=$('loginPassword').value;navHistory=[];if(u===ADMIN.username&&p===ADMIN.password){currentUser={name:'Admin',username:u};trackLogin(u);showPage('adminDashboard');renderAdminDashboard();$('welcomeUser').textContent='Welcome, Admin';return;}const f=users.find(x=>x.username===u&&x.password===p);if(f){currentUser={name:f.name,username:f.username};$('welcomeUser').textContent='Welcome, '+f.name;trackLogin(u);showPage('dashboard');renderStudentDashboard();}else{alert('Invalid username or password!');}});
+        $('signupForm').addEventListener('submit',function(e){e.preventDefault();const n=$('signupName').value.trim(),r=$('signupRoll').value.trim(),g=$('signupGroup').value,u=$('signupUsername').value.trim(),p=$('signupPassword').value;if(u===ADMIN.username){alert('This username is reserved.');return;}if(users.find(x=>x.username===u)){alert('Username already exists!');return;}users.push({name:n,roll:r,group:g,username:u,password:p});localStorage.setItem('mbbs55_users',JSON.stringify(users));alert('Registration successful! Please login.');showPage('login');$('signupForm').reset();});
+        $('showSignup').addEventListener('click',e=>{e.preventDefault();showPage('signup');});
+        $('showLogin').addEventListener('click',e=>{e.preventDefault();showPage('login');});
+        $('logoutBtn').addEventListener('click',()=>{if(currentUser)trackLogout(currentUser.username);currentUser=null;navHistory=[];showPage('login');$('loginForm').reset();});
+
+        // Admin dashboard
+        function renderAdminDashboard(){renderAccountsList();renderLoggedInList();renderMenuBuilder();renderMenuParentOptions();}
+        function renderAccountsList(){const el=$('accountsList');if(!users.length){el.innerHTML='<div class="empty-state"><div class="icon">👤</div><p>No registered accounts yet</p></div>';return;}el.innerHTML=users.map(u=>'<div class="account-item"><div><div class="account-name">'+u.name+'</div><div class="account-user">@'+u.username+' | Roll: '+u.roll+' | Group: '+u.group+'</div><div class="account-pass">Password: '+u.password+'</div></div></div>').join('');}
+        function renderLoggedInList(){const el=$('loggedInList');if(!loggedInUsers.length){el.innerHTML='<div class="empty-state"><div class="icon">🔴</div><p>No users currently logged in</p></div>';return;}el.innerHTML=loggedInUsers.map(u=>'<div class="account-item"><div><span class="status-dot status-online"></span><span class="account-name">'+u.username+'</span><div style="color:#888;font-size:12px;margin-top:4px;">Since: '+new Date(u.time).toLocaleString()+'</div></div></div>').join('');}
+        function renderMenuBuilder(){const el=$('menuList');if(!customMenus.length){el.innerHTML='<div class="empty-state" style="padding:15px;"><p>No custom menus yet</p></div>';return;}function renderMenuItem(m,depth){const indent=depth*20;const hasChildren=m.children&&m.children.length>0;let html='<div class="account-item" style="padding-left:'+(15+indent)+'px;"><div style="flex:1;"><span class="account-name">'+(hasChildren?'📁':'📄')+' '+m.name+'</span><div class="account-user">Files: '+(m.files?m.files.length:0)+(hasChildren?' | Sub-menus: '+m.children.length:'')+'</div></div><button class="btn-danger menu-delete-btn" data-id="'+m.id+'" style="padding:5px 10px;font-size:12px;">Delete</button></div>';if(hasChildren)m.children.forEach(c=>{html+=renderMenuItem(c,depth+1);});return html;}el.innerHTML=customMenus.map(m=>renderMenuItem(m,0)).join('');}
+        function renderMenuParentOptions(){const el=$('menuParent');if(!el)return;let opts='';['pharma','fomed'].forEach(s=>{const label=s==='pharma'?'Pharmacology':'Forensic Medicine';opts+='<optgroup label="'+label+'">';opts+='<option value="'+s+'">Top Level - '+label+'</option>';function addOpts(menus,prefix){menus.forEach(m=>{if(m.parent===s){const full=prefix?prefix+' > '+m.name:m.name;opts+='<option value="custom:'+m.id+'">'+full+'</option>';if(m.children)addOpts(m.children,full);}});}addOpts(customMenus.filter(m=>m.parent===s),'');opts+='</optgroup>';});el.innerHTML=opts;renderUploadParentOptions();}
+        function findMenuById(id,menus){for(let m of menus){if(m.id===id)return m;if(m.children){const found=findMenuById(id,m.children);if(found)return found;}}return null;}
+        function deleteMenuById(id,menus){for(let i=0;i<menus.length;i++){if(menus[i].id===id){menus.splice(i,1);return true;}if(menus[i].children&&deleteMenuById(id,menus[i].children))return true;}return false;}
+        $('menuList').addEventListener('click',function(e){const btn=e.target.closest('.menu-delete-btn');if(btn){const id=btn.dataset.id;if(!confirm('Delete this menu and all its files?'))return;deleteMenuById(id,customMenus);localStorage.setItem('mbbs55_custom_menus',JSON.stringify(customMenus));renderMenuBuilder();renderMenuParentOptions();}});
+        $('createMenuBtn').addEventListener('click',function(){const name=$('menuName').value.trim();const parentVal=$('menuParent').value;if(!name){return;}const newId='menu_'+Date.now();const isNested=parentVal.startsWith('custom:');const newMenu={id:newId,name:name,parent:isNested?(findMenuById(parentVal.substring(7),customMenus)||{}).parent||'pharma':parentVal,files:[],children:[]};if(isNested){const parentId=parentVal.substring(7);const parentMenu=findMenuById(parentId,customMenus);if(parentMenu){if(!parentMenu.children)parentMenu.children=[];parentMenu.children.push(newMenu);}}else{customMenus.push(newMenu);}localStorage.setItem('mbbs55_custom_menus',JSON.stringify(customMenus));$('menuName').value='';renderMenuBuilder();renderMenuParentOptions();});
+
+        // Upload
+        function renderUploadParentOptions(){const el=$('uploadParent');let opts='<option value="">Select menu to upload to</option>';['pharma','fomed'].forEach(s=>{const label=s==='pharma'?'Pharmacology':'Forensic Medicine';opts+='<optgroup label="'+label+'">';opts+='<option value="'+s+'-tana">'+label+' - Tana Question</option>';opts+='<option value="'+s+'-arranged">'+label+' - Arranged</option>';function addMenuOpts(menus,prefix){menus.forEach(m=>{if(m.parent===s||!m.parent){const fullPath=prefix?prefix+' > '+m.name:m.name;opts+='<option value="custom:'+m.id+'">'+label+' - '+fullPath+'</option>';if(m.children)addMenuOpts(m.children,fullPath);}});}addMenuOpts(customMenus.filter(m=>m.parent===s),'');opts+='</optgroup>';});el.innerHTML=opts;}
+        let pendingFiles=[];
+        $('uploadZone').addEventListener('click',()=>$('fileInput').click());
+        $('uploadZone').addEventListener('dragover',e=>{e.preventDefault();$('uploadZone').style.borderColor='#2980b9';$('uploadZone').style.background='#f0f8ff';});
+        $('uploadZone').addEventListener('dragleave',()=>{$('uploadZone').style.borderColor='#e0e0e0';$('uploadZone').style.background='';});
+        $('uploadZone').addEventListener('drop',e=>{e.preventDefault();$('uploadZone').style.borderColor='#e0e0e0';$('uploadZone').style.background='';handleFiles(e.dataTransfer.files);});
+        $('fileInput').addEventListener('change',function(){if(this.files.length)handleFiles(this.files);this.value='';});
+        function handleFiles(fileList){const target=$('uploadParent').value;if(!target){alert('Please select a menu to upload to.');return;}pendingFiles=Array.from(fileList);renderPreview();}
+        function renderPreview(){const area=$('previewArea');if(!pendingFiles.length){area.innerHTML='<p style="color:#999;font-size:13px;">No files selected</p>';return;}area.innerHTML='';pendingFiles.forEach((file,fi)=>{const reader=new FileReader();reader.onload=function(e){const dataUrl=e.target.result;const isImage=file.type.startsWith('image/');const card=document.createElement('div');card.style.cssText='border:1px solid #e0e0e0;border-radius:8px;padding:10px;width:150px;text-align:center;position:relative;';card.innerHTML=(isImage?'<img src="'+dataUrl+'" style="width:100%;height:100px;object-fit:cover;border-radius:6px;">':'<div style="height:100px;display:flex;align-items:center;justify-content:center;font-size:40px;">📄</div>')+'<p style="font-size:11px;margin-top:6px;color:#333;word-break:break-all;">'+file.name+'</p><button class="btn-danger" onclick="removePendingFile('+fi+')" style="position:absolute;top:5px;right:5px;padding:2px 6px;font-size:10px;">✕</button>';area.appendChild(card);};reader.readAsDataURL(file);});const uploadBtn=document.createElement('button');uploadBtn.className='btn-success';uploadBtn.style.cssText='margin-top:10px;width:100%;';uploadBtn.textContent='⬆️ Upload All ('+pendingFiles.length+' files)';uploadBtn.onclick=uploadAllFiles;area.appendChild(uploadBtn);}
+        window.removePendingFile=function(idx){pendingFiles.splice(idx,1);renderPreview();};
+        function uploadAllFiles(){const target=$('uploadParent').value;if(!target||!pendingFiles.length){return;}$('uploadStatus').innerHTML='<p style="color:#2980b9;">⏳ Uploading '+pendingFiles.length+' files...</p>';let uploaded=0;const total=pendingFiles.length;pendingFiles.forEach(file=>{const reader=new FileReader();reader.onload=function(e){const dataUrl=e.target.result;const fileObj={name:file.name,data:dataUrl,time:new Date().toISOString()};if(target.startsWith('custom:')){const menuId=target.substring(7);const menu=findMenuById(menuId,customMenus);if(menu){menu.files.push(fileObj);}}else{uploadedFiles.push({target,file:fileObj});}uploaded++;if(uploaded===total){localStorage.setItem('mbbs55_custom_menus',JSON.stringify(customMenus));localStorage.setItem('mbbs55_uploaded_files',JSON.stringify(uploadedFiles));$('uploadStatus').innerHTML='<p style="color:#27ae60;">✅ All '+total+' files uploaded successfully!</p>';pendingFiles=[];renderPreview();renderMenuBuilder();setTimeout(()=>$('uploadStatus').innerHTML='',3000);}};reader.readAsDataURL(file);});}
+
+        // Student dashboard - custom menus show as list view pages
+        function renderStudentDashboard(){
+            document.querySelectorAll('.dynamic-section').forEach(s=>s.remove());
+            document.querySelectorAll('.dynamic-menu-item').forEach(s=>s.remove());
+            document.querySelectorAll('.dd-sub[id^="dyn-"]').forEach(s=>s.remove());
+            const mc=document.querySelector('.main-content');
+            function isImg(n){return /\.(jpg|jpeg|png)$/i.test(n);}
+            // For each custom menu: add entry to dropdown + create a list-view page
+            function processMenu(menu,pathArr){
+                const secId='cmenu-'+menu.id;
+                const parentLabel=menu.parent==='pharma'?'Pharmacology':'Forensic Medicine';
+                const breadcrumb=pathArr.map(p=>p.name).join(' › ');
+                // Create list-view section
+                const sec=document.createElement('div');
+                sec.className='section dynamic-section';
+                sec.id=secId;
+                let cardsHtml='';
+                // Sub-menus as folder cards
+                if(menu.children&&menu.children.length>0){
+                    menu.children.forEach(child=>{
+                        const childSecId='cmenu-'+child.id;
+                        const childFiles=child.files?child.files.length:0;
+                        const childFolders=child.children?child.children.length:0;
+                        cardsHtml+='<div class="file-card dyn-nav" data-section="'+childSecId+'"><div class="file-card-thumb">📁</div><div class="file-card-info"><div class="file-card-name">'+child.name+'</div><div class="file-card-meta">'+childFiles+' files'+(childFolders?' · '+childFolders+' subfolders':'')+'</div></div><span style="color:#2980b9;font-size:18px;">▶</span></div>';
+                    });
+                }
+                // Files as file cards
+                if(menu.files&&menu.files.length>0){
+                    menu.files.forEach((f,fi)=>{
+                        const fid='cfile-'+menu.id+'-'+fi;
+                        const img=isImg(f.name);
+                        cardsHtml+='<div class="file-card dyn-file" data-fid="'+fid+'">'+(img?'<img class="file-card-thumb" src="'+f.data+'">':'<div class="file-card-thumb">📄</div>')+'<div class="file-card-info"><div class="file-card-name">'+f.name+'</div><div class="file-card-meta">'+(img?'Image':'PDF')+' · '+new Date(f.time).toLocaleDateString()+'</div></div><span style="color:#2980b9;font-size:18px;">▶</span></div>';
+                    });
+                }
+                if(!cardsHtml)cardsHtml='<div class="empty-state"><div class="icon">📭</div><p>No files uploaded yet</p></div>';
+                const crumbs=pathArr.map((p,i)=>'<span class="crumb-link dyn-nav" data-section="cmenu-'+p.id+'">'+p.name+'</span>').join(' › ');
+                sec.innerHTML='<div class="breadcrumb"><span class="crumb-link dyn-nav" data-section="none">pdf › '+parentLabel+'</span> '+(crumbs?'› '+crumbs:'')+'</div><h2>'+menu.name+'</h2><div class="file-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:15px;">'+cardsHtml+'</div>';
+                mc.appendChild(sec);
+                // Create file-view sections for each file
+                if(menu.files){
+                    menu.files.forEach((f,fi)=>{
+                        const fid='cfile-'+menu.id+'-'+fi;
+                        const fsec=document.createElement('div');
+                        fsec.className='section dynamic-section';
+                        fsec.id=fid;
+                        const img=isImg(f.name);
+                        const crumbPath='pdf › '+parentLabel+' › '+breadcrumb;
+                        fsec.innerHTML='<div class="breadcrumb"><span class="crumb-link dyn-nav" data-section="'+secId+'">'+crumbPath+'</span> › '+f.name+'</div><h2>'+f.name+'</h2><div class="image-viewer">'+(img?'<img src="'+f.data+'" style="max-width:100%;max-height:500px;border-radius:8px;">':'<p style="margin-bottom:15px;color:#333;font-size:15px;">📄 '+f.name+'</p>')+'<div class="download-row"><button class="btn-download dyn-dl" data-data="'+f.data+'" data-name="'+f.name+'">⬇️ Download</button><button class="btn-back go-back-btn">← Back</button></div></div>';
+                        mc.appendChild(fsec);
+                    });
+                }
+                // Recurse into children
+                if(menu.children)menu.children.forEach(child=>processMenu(child,[...pathArr,menu]));
+                // Add dropdown entry
+                const targetSub=$(menu.parent+'-l2');
+                if(targetSub){
+                    const item=document.createElement('div');
+                    item.className='dd-sub-item dynamic-menu-item dyn-nav';
+                    item.dataset.section=secId;
+                    item.textContent=(menu.children&&menu.children.length?'📁':'📄')+' '+menu.name;
+                    targetSub.appendChild(item);
+                }
+            }
+            ['pharma','fomed'].forEach(p=>{
+                customMenus.filter(m=>m.parent===p).forEach(m=>processMenu(m,[]));
+            });
+            // Uploaded files in tana/arranged
+            ['pharma','fomed'].forEach(p=>{
+                const tanaFiles=uploadedFiles.filter(f=>f.target===p+'-tana');
+                const arrangedFiles=uploadedFiles.filter(f=>f.target===p+'-arranged');
+                if(tanaFiles.length>0){const s=$(p+'-tana');if(s)tanaFiles.forEach(f=>{const d=document.createElement('div');d.className='image-viewer dynamic-section';d.style.marginTop='15px';const img=isImg(f.file.name);d.innerHTML=(img?'<img src="'+f.file.data+'" style="max-width:100%;max-height:400px;border-radius:8px;">':'')+'<p style="margin-bottom:10px;color:#333;font-size:14px;">📄 '+f.file.name+'</p><div class="download-row"><button class="btn-download dyn-dl" data-data="'+f.file.data+'" data-name="'+f.file.name+'">⬇️ Download</button></div>';s.appendChild(d);});}
+                if(arrangedFiles.length>0){const s=$(p+'-arranged');if(s)arrangedFiles.forEach(f=>{const d=document.createElement('div');d.className='image-viewer dynamic-section';d.style.marginTop='15px';const img=isImg(f.file.name);d.innerHTML=(img?'<img src="'+f.file.data+'" style="max-width:100%;max-height:400px;border-radius:8px;">':'')+'<p style="margin-bottom:10px;color:#333;font-size:14px;">📄 '+f.file.name+'</p><div class="download-row"><button class="btn-download dyn-dl" data-data="'+f.file.data+'" data-name="'+f.file.name+'">⬇️ Download</button></div>';s.appendChild(d);});}
+            });
+        }
+        Object.keys(imageMap).forEach(k=>{const img=$(k+'_img');if(img)img.src=imageMap[k];});
+        renderStudentDashboard();
+        function downloadURL(d,n){const p=d.split(','),m=p[0].match(/:(.*?);/)[1],b=atob(p[1]),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);const bl=new Blob([u],{type:m});const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=n;document.body.appendChild(a);a.click();document.body.removeChild(a);}
+
+        // Event bindings
+        $('pdfDropdown').querySelector('.dropdown-trigger').addEventListener('click',function(e){e.stopPropagation();const panel=$('pdfDropdown').querySelector('.dd-panel');const wasOpen=panel.classList.contains('open');closeAll();if(!wasOpen){panel.classList.add('open');this.classList.add('open');}});
+        document.querySelectorAll('.dd-item[data-toggle]').forEach(item=>{item.addEventListener('click',function(e){e.stopPropagation();const cid=this.dataset.toggle;const wasOpen=$(cid).classList.contains('open');document.querySelectorAll('.dd-sub').forEach(s=>s.classList.remove('open'));document.querySelectorAll('.dd-item').forEach(i=>{i.classList.remove('open');i.querySelector('.arr').textContent='▶';});if(!wasOpen){$(cid).classList.add('open');this.classList.add('open');this.querySelector('.arr').textContent='▼';}});});
+        document.querySelectorAll('.dd-sub-item[data-toggle]').forEach(item=>{item.addEventListener('click',function(e){e.stopPropagation();const cid=this.dataset.toggle;const wasOpen=$(cid).classList.contains('open');document.querySelectorAll('.dd-leaf').forEach(l=>l.classList.remove('open'));document.querySelectorAll('.dd-sub-item[data-toggle]').forEach(i=>{i.classList.remove('open');i.querySelector('.arr').textContent='▶';});if(!wasOpen){$(cid).classList.add('open');this.classList.add('open');this.querySelector('.arr').textContent='▼';}});});
+        document.querySelectorAll('.dd-sub-item[data-section],.dd-leaf-item[data-section]').forEach(item=>{item.addEventListener('click',function(e){e.stopPropagation();goSection(this.dataset.section);});});
+        // Delegation for dynamic nav, files, downloads
+        document.addEventListener('click',function(e){
+            const nav=e.target.closest('.dyn-nav');
+            if(nav){e.stopPropagation();goSection(nav.dataset.section);return;}
+            const fcard=e.target.closest('.dyn-file');
+            if(fcard){e.stopPropagation();goSection(fcard.dataset.fid);return;}
+            const imgCard=e.target.closest('.batch-card[data-img]');
+            if(imgCard){goSection(imgCard.dataset.img);return;}
+            const dl=e.target.closest('.dyn-dl');
+            if(dl){e.stopPropagation();const d=dl.dataset.data,n=dl.dataset.name;if(d)downloadURL(d,n);return;}
+            const ib=e.target.closest('.btn-download[data-imgkey]');
+            if(ib){const k=ib.dataset.imgkey,n=ib.dataset.dlname;if(imageMap[k])downloadURL(imageMap[k],n);return;}
+            const pb=e.target.closest('.btn-download[data-pdfkey]');
+            if(pb){const k=pb.dataset.pdfkey,n=pb.dataset.dlname;const du=window['_'+k+'_pdf'];if(du)downloadURL(du,n);return;}
+            const b=e.target.closest('.go-back-btn');
+            if(b){e.stopPropagation();goBack();return;}
+            const cr=e.target.closest('.crumb-link[data-section]');
+            if(cr){const sid=cr.dataset.section;closeAll();hideAllSections();if(sid&&sid!=='none')$(sid).classList.add('active');}
+        });
+        document.addEventListener('click',()=>{closeAll();});
+        window.addEventListener('storage',function(e){if(e.key==='mbbs55_custom_menus'||e.key==='mbbs55_uploaded_files'){customMenus=JSON.parse(localStorage.getItem('mbbs55_custom_menus')||'[]');uploadedFiles=JSON.parse(localStorage.getItem('mbbs55_uploaded_files')||'[]');renderStudentDashboard();}});
+        $('adminLogoutBtn').addEventListener('click',()=>{if(currentUser)trackLogout(currentUser.username);currentUser=null;showPage('login');$('loginForm').reset();});
+    })();
+    </script>
+</body>
+</html>
